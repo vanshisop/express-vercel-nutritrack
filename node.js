@@ -1255,8 +1255,12 @@ app.post('/get-meals', async (req, res) => {
         mealsQuery = `UPDATE users SET target_weight = $1 WHERE user_id = $2;`
       }
       else if( goal == "currentWeight"){
-        mealsQuery = `UPDATE users SET current_weight = $1 WHERE user_id = $2;`
-        mealsQuery = `UPDATE users SET initial_weight = $1 WHERE user_id = $2;`
+        mealsQuery = `
+            UPDATE users
+            SET current_weight = $1,
+                initial_weight = $1
+            WHERE user_id = $2;
+            `;
       }
       else if( goal == "lifestyle"){
         mealsQuery = `UPDATE users SET lifestyle = $1 WHERE user_id = $2;`
