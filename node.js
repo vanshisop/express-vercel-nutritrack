@@ -295,8 +295,8 @@ app.post('/login', async (req, res) => {
                     res.cookie('authToken', token, {
                         httpOnly: true,
                         maxAge: 3600000, // 1 hour in milliseconds
-                        secure: false, // Set to true if using HTTPS
-                        sameSite: 'lax', // Set to 'None' if using cross-site cookies
+                        secure: true, // Set to true if using HTTPS
+                        sameSite: 'None', // Set to 'None' if using cross-site cookies
                         path: '/' // Cookie is accessible from all paths
                     });
 
@@ -1386,8 +1386,8 @@ app.post('/log-out', async (req, res) => {
     res.cookie('authToken', '', {
         httpOnly: true,
         maxAge: 0, // Set the maxAge to 0 to expire the cookie immediately
-        secure: false, // Set to true if using HTTPS
-        sameSite: 'lax', // Ensure this matches the setting you used when the cookie was set
+        secure: true, // Set to true if using HTTPS
+        sameSite: 'None', // Ensure this matches the setting you used when the cookie was set
         path: '/' // Cookie is accessible from all paths
     });
     res.status(200).json({ message: "Cookie Removed" });
