@@ -8,7 +8,7 @@
         "dev": "nodemon node.js"
     },
     "keywords": [],
-    "author": "Vanhs Saxena",
+    "author": "Vansh Saxena",
     "license": "ISC",
     "dependencies": {
         "axios": "^1.7.7",
