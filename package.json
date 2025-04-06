@@ -1,0 +1,29 @@
+{
+    "name": "my-node-app",
+    "version": "1.0.0",
+    "description": "A simple Node.js server with Express and PostgreSQL",
+    "main": "node.js",
+    "scripts": {
+        "start": "node node.js",
+        "dev": "nodemon node.js"
+    },
+    "keywords": [],
+    "author": "Vanhs Saxena",
+    "license": "ISC",
+    "dependencies": {
+        "axios": "^1.7.7",
+        "bcrypt": "^5.1.1",
+        "body-parser": "^1.20.1",
+        "cookie": "^0.7.2",
+        "cookie-parser": "^1.4.6",
+        "cors": "^2.8.5",
+        "express": "^4.18.2",
+        "jsonwebtoken": "^9.0.2",
+        "nodemailer": "^6.9.15",
+        "pg": "^8.10.0",
+        "request": "^2.88.2"
+    },
+    "devDependencies": {
+        "nodemon": "^3.1.7"
+    }
+}
