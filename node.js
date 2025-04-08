@@ -991,8 +991,8 @@ app.post('/set-meal-plan', async (req, res) => {
         6: "Sunday"
     };
 
-    const { weeklyPlan } = req.body;
-
+    const { userID, weeklyPlan } = req.body;
+    console.log(weeklyPlan);
     try {
         // Clear existing meal plan for user_id = 1
         await pool.query("DELETE FROM mealplan WHERE user_id = 1");
@@ -1005,17 +1005,16 @@ app.post('/set-meal-plan', async (req, res) => {
             for (const meal of meals) {
                 const query = `
                     INSERT INTO mealplan (
-                        user_id, 
                         meal_name, 
-                        meal_type, 
                         day, 
                         calories, 
                         protein, 
                         fats, 
                         carbs, 
-                        ingredients
+                        ingredients,
+                        user_id
                     ) VALUES (
-                        1, $1, $2, $3, $4, $5, $6, $7, $8
+                         $1, $2, $3, $4, $5, $6, $7,$8
                     )
                 `;
 
@@ -1026,13 +1025,13 @@ app.post('/set-meal-plan', async (req, res) => {
 
                 const values = [
                     meal.name,
-                    meal.type,
                     day,
                     roundedCalories,
                     roundedProtein,
                     roundedFats,
                     roundedCarbs,
-                    JSON.stringify(meal.ingredients)
+                    JSON.stringify(meal.ingredients),
+                    userID
                 ];
 
                 await pool.query(query, values);
@@ -1051,7 +1050,6 @@ app.post('/set-meal-plan', async (req, res) => {
         });
     }
 });
-
 
 
 app.post('/get-meal-plan', async (req, res) => {
