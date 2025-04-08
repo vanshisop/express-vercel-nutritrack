@@ -14,7 +14,7 @@ const cookie = require('cookie');
 const cookieParser = require('cookie-parser');
 const axios = require("axios");
 const { log } = require('console');
-const openaiApiKey = "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"
+const openaiApiKey = process.env.OPEN_API_KEY
 async function searchFoods({ search_expression, page_number = 0, max_results = 20, format = 'json', generic_description, region, language }) {
 
     const params = {
