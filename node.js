@@ -102,7 +102,7 @@ function generateCaloriesForLast30Days(data) {
 
   
 app.use(cors({
-    origin: 'http://localhost:3000', // Your frontend URL
+    origin: 'https://nutritrack-three.vercel.app/', // Your frontend URL
     credentials: true, // Allow credentials (cookies) to be sent
   }));
 app.use(cookieParser());
