@@ -100,11 +100,23 @@ function generateCaloriesForLast30Days(data) {
     return result;
 }
 
-  
+const allowedOrigins = [
+  'https://nutritrack-three.vercel.app',
+  'http://localhost:3000', // example second origin (local dev)
+];
+
 app.use(cors({
-    origin: 'https://nutritrack-three.vercel.app', // Your frontend URL
-    credentials: true, // Allow credentials (cookies) to be sent
-  }));
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+}));
 app.use(cookieParser());
 app.use(bodyParser.json());
 
