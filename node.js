@@ -1118,27 +1118,49 @@ app.post('/get-meal-plan', async (req, res) => {
     }
 })
 
-app.post('/add-weight', async(req,res) =>{
+app.post('/add-weight', async (req, res) => {
+    const { id, weight, date } = req.body;
+    console.log("hi");
+    try {
+        // Check if a record exists for the given user_id and date
+        const checkQuery = "SELECT * FROM weight WHERE user_id = $1 AND date = $2";
+        const existingRecord = await pool.query(checkQuery, [id, date]);
 
-   const { id, weight, date } = req.body;
+        if (existingRecord.rowCount > 0) {
+            // If record exists, update the weight
+            const updateQuery = "UPDATE weight SET weight = $1 WHERE user_id = $2 AND date = $3";
+            await pool.query(updateQuery, [weight, id, date]);
+        } else {
+            // If no record exists, insert a new one
+            const insertQuery = "INSERT INTO weight (user_id, date, weight) VALUES ($1, $2, $3)";
+            await pool.query(insertQuery, [id, date, weight]);
+        }
 
-// Check if a record exists for the given user_id and date
-    const checkQuery = "SELECT * FROM weight WHERE user_id = $1 AND date = $2";
-    const existingRecord = await pool.query(checkQuery, [id, date]);
+        // Retrieve the latest weight for the user, ordered by date (most recent first)
+        const latestWeightQuery = `
+            SELECT weight 
+            FROM weight 
+            WHERE user_id = $1 
+            ORDER BY date DESC 
+            LIMIT 1
+        `;
+        const latestWeightResult = await pool.query(latestWeightQuery, [id]);
 
-    if (existingRecord.rowCount > 0) {
-    // If record exists, update the weight
-        const updateQuery = "UPDATE weight SET weight = $1 WHERE user_id = $2 AND date = $3";
-        await pool.query(updateQuery, [weight, id, date]);
-    } else {
-    // If no record exists, insert a new one
-        const insertQuery = "INSERT INTO weight (user_id, date, weight) VALUES ($1, $2, $3)";
-        await pool.query(insertQuery, [id, date, weight]);
+        if (latestWeightResult.rowCount > 0) {
+            const latestWeight = latestWeightResult.rows[0].weight;
+
+            // Update the user's current_weight with the latest weight
+            const updateUserWeightQuery = "UPDATE users SET current_weight = $1 WHERE user_id = $2";
+            await pool.query(updateUserWeightQuery, [latestWeight, id]);
+        }
+
+        // Respond to the client
+        return res.json({ success: true, message: "Weight updated successfully." });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ success: false, message: "An error occurred." });
     }
-
-    // Respond to the client
-    return res.json({ add: "Yes" });
-})
+});
 
 app.post('/get-meals', async (req, res) => {
     try {
