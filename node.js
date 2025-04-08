@@ -104,6 +104,7 @@ function generateCaloriesForLast30Days(data) {
 const allowedOrigins = [
   'https://nutritrack-three.vercel.app',
   'http://localhost:3000', // example second origin (local dev)
+  'http://10.182.75.200:3000'
 ];
 
 app.use(cors({
