@@ -298,7 +298,6 @@ app.post('/login', async (req, res) => {
                         secure: true, // Set to true if using HTTPS
                         sameSite: 'None', // Set to 'None' if using cross-site cookies
                         path: '/' // Cookie is accessible from all paths,
-                        domain: 'https://nutritrack-three.vercel.app'
                     });
 
                     res.json({ login: "allow" });
