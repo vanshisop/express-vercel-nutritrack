@@ -995,7 +995,7 @@ app.post('/set-meal-plan', async (req, res) => {
     console.log(weeklyPlan);
     try {
         // Clear existing meal plan for user_id = 1
-        await pool.query("DELETE FROM mealplan WHERE user_id = $1",userID);
+        await pool.query("DELETE FROM mealplan WHERE user_id = $1", [userID]);
 
         // Insert new plan
         for (let i = 0; i < weeklyPlan.length; i++) {
