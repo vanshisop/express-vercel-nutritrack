@@ -991,13 +991,16 @@ app.post('/set-meal-plan', async (req, res) => {
         6: "Sunday"
     };
 
-    const { weeklyPlan } = req.body; // Assuming the updated structure is passed as weeklyPlan
-    console.log(weeklyPlan);
+    const { weeklyPlan } = req.body;
 
     try {
+        // Clear existing meal plan for user_id = 1
+        await pool.query("DELETE FROM mealplan WHERE user_id = 1");
+
+        // Insert new plan
         for (let i = 0; i < weeklyPlan.length; i++) {
-            const day = map[i]; // Map the index to a day name
-            const meals = weeklyPlan[i]?.meals || []; // Access meals array for the day, or default to an empty array
+            const day = map[i];
+            const meals = weeklyPlan[i]?.meals || [];
 
             for (const meal of meals) {
                 const query = `
@@ -1011,38 +1014,27 @@ app.post('/set-meal-plan', async (req, res) => {
                         fats, 
                         carbs, 
                         ingredients
-                    )
-                    VALUES (
+                    ) VALUES (
                         1, $1, $2, $3, $4, $5, $6, $7, $8
                     )
-                    ON CONFLICT (meal_type, day)
-                    DO UPDATE SET 
-                        meal_name = EXCLUDED.meal_name,
-                        calories = EXCLUDED.calories,
-                        protein = EXCLUDED.protein,
-                        fats = EXCLUDED.fats,
-                        carbs = EXCLUDED.carbs,
-                        ingredients = EXCLUDED.ingredients;
                 `;
 
-                // Round down the numeric values to the nearest integers
                 const roundedCalories = Math.floor(meal.calories || 0);
                 const roundedProtein = Math.floor(meal.protein || 0);
                 const roundedFats = Math.floor(meal.fats || 0);
                 const roundedCarbs = Math.floor(meal.carbs || 0);
 
                 const values = [
-                    meal.name,                  // Meal name
-                    meal.type,                  // Meal type (e.g., breakfast, lunch, etc.)
-                    day,                        // Day of the week
-                    roundedCalories,            // Rounded calories
-                    roundedProtein,             // Rounded protein
-                    roundedFats,                // Rounded fats
-                    roundedCarbs,               // Rounded carbs
-                    JSON.stringify(meal.ingredients) // Ingredients as JSON
+                    meal.name,
+                    meal.type,
+                    day,
+                    roundedCalories,
+                    roundedProtein,
+                    roundedFats,
+                    roundedCarbs,
+                    JSON.stringify(meal.ingredients)
                 ];
 
-                // Execute the query with parameterized values to prevent SQL injection
                 await pool.query(query, values);
             }
         }
@@ -1059,7 +1051,6 @@ app.post('/set-meal-plan', async (req, res) => {
         });
     }
 });
-
 
 
 
