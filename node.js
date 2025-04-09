@@ -507,10 +507,19 @@ app.post('/save-recipe', async (req, res) => {
 
 app.post('/get-calories-saved-recipes', async (req, res) => {
     
-    const { id } = req.body;
+    const { id,timezone } = req.body;
   
-    const query = "SELECT SUM(total_calories) AS total_calories, SUM(proteins) AS total_proteins, SUM(carbs) AS total_carbs, SUM(fats) AS total_fats FROM meals WHERE user_id = $1 AND date = CURRENT_DATE";
-    const userResponse = await pool.query(query, [id]);
+    const query = `
+    SELECT 
+        SUM(total_calories) AS total_calories, 
+        SUM(proteins) AS total_proteins, 
+        SUM(carbs) AS total_carbs, 
+        SUM(fats) AS total_fats 
+    FROM meals 
+    WHERE user_id = $1 
+        AND date = (NOW() AT TIME ZONE $2)::date
+`;
+    const userResponse = await pool.query(query, [id,timezone]);
 
     const { total_calories, total_proteins, total_carbs, total_fats } = userResponse.rows[0];
     const query2 = "SELECT meal_name,saved_recipe_id,ingredients,calories,proteins,fats,carbs FROM saved_recipes WHERE user_id = $1 ORDER BY saved_recipe_id DESC"
